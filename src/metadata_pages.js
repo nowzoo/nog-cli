@@ -89,7 +89,7 @@ module.exports = function (program, options, callback) {
             function (callback) {
                 _.each(pages, function(page, id){
                     if (program.verbose) console.log(colors.cyan('Normalizing the path for %s...'), id);
-                    page.path = options.atomic_path(page);
+                    page.path = options.atomic_path(page, id);
                 });
                 callback(null);
             }

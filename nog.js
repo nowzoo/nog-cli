@@ -41,17 +41,17 @@ program
     .command('build')
     .description('Build the site')
     .action(function(){
-        var metadata;
+        var data;
         async.series(
             [
                 function(callback){
                     metadata(program, function(err, result){
-                        metadata = result;
+                        data = result;
                         callback(err);
                     });
                 },
                 function(callback){
-                    build(program, metadata, callback);
+                    build(program, data, callback);
                 }
             ],
             function(err){

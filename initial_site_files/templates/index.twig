@@ -1,0 +1,9 @@
+{% extends 'main.twig' %}
+{% block head_title %}{{ post.title }} | {{ post.title }}{% endblock %}
+{% block body %}
+    <article>
+        <div>
+            {% autoescape false %}{{ post.content }}{% endautoescape %}
+        </div>
+    </article>
+{% endblock %}

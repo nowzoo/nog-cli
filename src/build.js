@@ -12,7 +12,6 @@ module.exports = function (program, metadata, callback) {
     var exec = require('child_process').exec;
     var grunt = require('grunt');
 
-    var gather_metadata = require('./gather_metadata');
 
 
     async.series(
@@ -33,11 +32,11 @@ module.exports = function (program, metadata, callback) {
                 var p = path.join(process.cwd(), '_site');
                 rimraf(p, callback);
             },
-            
+
 
             //write the atomic content...
             function(callback){
-                var content = [].concat(metadata.index, _.values(metadata.posts), _.values(metadata.pages))
+                var content = [].concat(metadata.index, _.values(metadata.posts), _.values(metadata.pages));
 
                 async.each(content, function(post, callback){
                     var template = path.join(process.cwd(), 'templates', post.type + '.twig');
@@ -46,6 +45,7 @@ module.exports = function (program, metadata, callback) {
                         post: post
                     };
                     swig.renderFile(template, data, function (err, output) {
+                        console.log(post.path);
                         var p = path.join(process.cwd(), '_site', post.path, 'index.html');
                         if (err) return callback(err);
                         grunt.file.write(p, output);
