@@ -1,11 +1,12 @@
 #!/usr/bin/env node
+var async = require('async');
 var program = require('commander');
 var path =  require('path');
 var colors = require('colors/safe');
 
 var init = require('./src/init');
-
 var metadata = require('./src/metadata');
+var build = require('./src/build');
 
 program
     .version('0.0.1')
@@ -25,16 +26,42 @@ program
 program
     .command('meta')
     .description('Show site meta')
-    .option('-v, --verbose', 'Verbose')
     .action(function(){
 
         metadata(program, function(err, data){
             if (err){
                 console.log(colors.red.bold(err));
             } else {
-                console.log(data);
+                //console.log(data);
             }
         });
+    });
+
+program
+    .command('build')
+    .description('Build the site')
+    .action(function(){
+        var metadata;
+        async.series(
+            [
+                function(callback){
+                    metadata(program, function(err, result){
+                        metadata = result;
+                        callback(err);
+                    });
+                },
+                function(callback){
+                    build(program, metadata, callback);
+                }
+            ],
+            function(err){
+                if (err){
+                    console.log(colors.red.bold(err));
+                } else {
+                    console.log(colors.green.bold('Done!'));
+                }
+            }
+        );
     });
 
 program.parse(process.argv);

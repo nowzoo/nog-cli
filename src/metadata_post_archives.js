@@ -17,6 +17,7 @@ module.exports = function (program, options, posts, callback) {
 
 
     var reverse_sort_archive_posts = function(archive){
+        var chunked;
         var rpp = options.posts_per_page || 10;
         rpp = parseInt(rpp);
         if (isNaN(rpp)) rpp = 10;
@@ -30,6 +31,16 @@ module.exports = function (program, options, posts, callback) {
         archive.page_count = Math.ceil(archive.post_count/rpp);
         archive.posts_per_page = rpp;
         archive.paged = archive.page_count > 1;
+        chunked = _.chunk(archive.posts, archive.posts_per_page);
+        archive.pages = [];
+        _.each(chunked, function(posts, i){
+            var page = {
+                posts: posts,
+                page: i,
+                path: options.archive_path(archive, i)
+            };
+            archive.pages.push(page);
+        })
     };
 
     if (program.verbose) console.log(colors.gray.bold('Creating post archives.'));
