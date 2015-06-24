@@ -59,7 +59,7 @@ module.exports = function (program, callback) {
             function(callback){
                 var content = [].concat(_.values(data.posts), _.values(data.pages), [data.index]);
                 metadata_search(content, function(err, result){
-                    data.search = result.search;
+                    data.search = result;
                     callback(err);
                 });
             }
