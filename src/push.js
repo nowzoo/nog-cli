@@ -82,7 +82,7 @@ module.exports = function(program, metadata, callback){
                 async.each(file_list, function(name, callback){
                     if (_.indexOf(keep, name) !== -1) return callback();
                     if (name.indexOf('.') === 0) return callback();
-                    rimraf(name);
+                    rimraf(name, callback);
                 }, callback)
             },
 
