@@ -1,0 +1,14 @@
+{% extends 'main.twig' %}
+{% block head_title %}{{ post.title }} | {{ post.title }}{% endblock %}
+{% block body %}
+    <article>
+        <header class="page-header">
+            <h1>{{ post.title }}</h1>
+        </header>
+        <div>
+            {{ post.content }}
+        </div>
+    </article>
+{% endblock %}
+
+

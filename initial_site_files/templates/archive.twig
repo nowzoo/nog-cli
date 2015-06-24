@@ -1,0 +1,46 @@
+{% extends 'main.twig' %}
+{% block head_title %}{{ archive.title }} | {{ site.title }}{% endblock %}
+{% block body %}
+    <header class="page-header">
+        <h1>{{ archive.title }}</h1>
+    </header>
+
+    <div class="list">
+        <nav>
+            <ul class="pager">
+                <li>
+                    {% if archive.paging.is_paged && page.paging.page > 0 %}
+                        <a href="{{ archive.pages[page.paging.page - 1].relative_url }}">Previous</a>
+                    {% else %}
+                        <span>Previous</span>
+                    {% endif %}
+                </li>
+                <li>
+                    {% if archive.paging.is_paged && page.paging.page < archive.pages.length %}
+                        <a href="{{ archive.pages[page.paging.page + 1].relative_url }}">Next</a>
+                    {% else %}
+                        <span>Next</span>
+                    {% endif %}
+                </li>
+            </ul>
+        </nav>
+
+
+        <ul class="list-unstyled">
+            {% for id in page.posts %}
+                {% set post = content[id] %}
+               <li>
+                   <article>
+                       <header>
+                           <h3>
+                               <a href="{{ post.relative_url }}">{{ post.title }}</a>
+                           </h3>
+                       </header>
+                   </article>
+               </li>
+            {% endfor %}
+        </ul>
+
+    </div>
+
+{% endblock %}
