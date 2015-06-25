@@ -15,13 +15,14 @@ module.exports = function (program, options, callback) {
     var file_list;
     var index;
 
-
+    var lib_path = path.dirname(__dirname);
+    var content_path_exists = true;
 
     if (program.verbose) console.log(colors.gray.bold('Gathering metadata for the home page...'));
 
     async.series(
         [
-            // Read the content/posts directory
+            // Read the content/index directory
             function(callback){
                 var p = path.join(process.cwd(), 'content', 'index');
                 if (program.verbose) console.log(colors.cyan('Reading the content/index directory...'));
@@ -35,26 +36,34 @@ module.exports = function (program, options, callback) {
             function(callback){
                 var filename = null;
                 if (_.indexOf(file_list, 'index.md') !== -1){
-                    filename = 'index.md';
+                    filename = path.join(process.cwd(), 'content', 'index', 'index.md');
                 } else {
                     if (_.indexOf(file_list, 'index.html') !== -1){
-                        filename = 'index.html';
+                        filename = path.join(lib_path, 'content', 'index', 'index.md');
+                    } else {
+                        filename = path.join(lib_path, 'initial_site_files', 'content', 'index', 'index.md');
+                        content_path_exists = false;
                     }
                 }
-                if (filename){
-                    read_content(program, 'index', filename, 'index', function(err, post){
-                        if (! err && post){
-                            index = post;
-                        }
-                        callback(err);
-                    });
-                } else {
-                    callback('No home page content found in the content/index directory.')
-                }
+                read_content(program, filename, 'index', function(err, post){
+                    if (! err && post){
+                        index = post;
+                    }
+                    callback(err);
+                });
+
 
             },
+            //Set an error if ! content_path_exists...
+            function (callback) {
+                if (! content_path_exists){
+                    index.has_error = true;
+                    index.errors.push('There was no index.md or index.html file found at content/index. Substituting default content for home page.');
+                }
+                callback(null);
+            },
 
-            //get the path...
+            //Set the path...
             function (callback) {
                 index.path = '';
                 callback(null);

@@ -17,7 +17,7 @@ module.exports = function (program, options, callback) {
     var archives;
     var posts = {};
 
-
+    var posts_path = path.join(process.cwd(), 'content', 'posts');
 
     if (program.verbose) console.log(colors.gray.bold('Gathering metadata for posts...'));
 
@@ -25,9 +25,8 @@ module.exports = function (program, options, callback) {
         [
             // Read the content/posts directory
             function(callback){
-                var p = path.join(process.cwd(), 'content', 'posts');
                 if (program.verbose) console.log(colors.cyan('Reading the content/posts directory...'));
-                fs.readdir(p, function(err, result){
+                fs.readdir(posts_path, function(err, result){
                     file_list = result;
                     callback(err);
                 });
@@ -36,7 +35,8 @@ module.exports = function (program, options, callback) {
             // Create the posts...
             function(callback){
                 async.each(file_list, function(filename, callback){
-                    read_content(program, 'posts', filename, 'post', function(err, post){
+                    var p = path.join(posts_path, filename);
+                    read_content(program, p, 'post', function(err, post){
                         if (! err && post){
                             posts[post.id] = post;
                         }

@@ -8,10 +8,10 @@ var init = require('./src/init');
 var metadata = require('./src/metadata');
 var build = require('./src/build');
 var push = require('./src/push');
+var show = require('./src/show');
 
 program
-    .version('0.0.1')
-    .option('-v, --verbose', 'Verbose');
+    .version('0.0.1');
 
 program
     .command('init <repo> [directory]')
@@ -24,19 +24,7 @@ program
         init(repo, directory);
     });
 
-program
-    .command('meta')
-    .description('Show site meta')
-    .action(function(){
 
-        metadata(program, function(err, data){
-            if (err){
-                console.log(colors.red.bold(err));
-            } else {
-                //console.log(data);
-            }
-        });
-    });
 
 program
     .command('build')
@@ -93,6 +81,20 @@ program
                 }
             }
         );
+    });
+
+program
+    .command('show <thing> [otherthings...]')
+    .description('Show site data')
+    .action(function(thing, otherthings){
+
+        metadata(program, function(err, data){
+            if (err){
+                console.log(colors.red.bold(err));
+            } else {
+                show(program, thing, otherthings, data);
+            }
+        });
     });
 
 program.parse(process.argv);

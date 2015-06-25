@@ -1,5 +1,5 @@
 /* jshint node: true */
-module.exports = function (program, subdirectory, filename, post_type, callback) {
+module.exports = function (program, content_file_path, post_type, callback) {
     'use strict';
     var colors = require('colors');
     var async = require('async');
@@ -14,7 +14,7 @@ module.exports = function (program, subdirectory, filename, post_type, callback)
 
     var post = {};
 
-    var ext = path.extname(filename);
+    var ext = path.extname(content_file_path);
 
     // we only accept HTML and Markdown...
     if (_.indexOf(['.html', '.md'], ext.toLowerCase()) === -1){
@@ -31,13 +31,9 @@ module.exports = function (program, subdirectory, filename, post_type, callback)
                 post.type = post_type;
                 post.has_error = false;
                 post.errors = [];
-                post.content_path = path.join(process.cwd(), 'content');
-                if (_.isString(subdirectory) && subdirectory.length > 0){
-                    post.content_path = path.join(post.content_path, subdirectory);
-                }
-                post.content_path = path.join(post.content_path, filename);
+                post.content_path = content_file_path;
                 post.content_type = ext.toLowerCase() === '.html' ? 'html' : 'markdown';
-                post.id = path.basename(filename, ext);
+                post.id = path.basename(content_file_path, ext);
                 callback(null);
             },
 
@@ -112,7 +108,7 @@ module.exports = function (program, subdirectory, filename, post_type, callback)
             function(callback){
                 if (program.verbose) console.log(colors.gray('Populating search words for %s.'), post.id);
                 var search_words = post.title + ' ' + post.content + ' ' + post.excerpt + ' ' + post.tags.join(' ');
-                search_words = S(search_words).stripTags().stripPunctuation().toLowerCase().split(/\s+/);
+                search_words = S(search_words).stripTags().toLowerCase().split(/\W+/);
                 search_words  = _.difference(search_words, stopwords);
                 search_words = _.filter(search_words, function(val) {return val.length > 0});
                 search_words = _.uniq(search_words);

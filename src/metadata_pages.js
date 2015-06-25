@@ -17,6 +17,7 @@ module.exports = function (program, options, callback) {
 
     if (program.verbose) console.log(colors.gray.bold('Gathering metadata for pages...'));
 
+    var pages_path = path.join(process.cwd(), 'content', 'pages');
 
 
     async.series(
@@ -24,9 +25,8 @@ module.exports = function (program, options, callback) {
 
             // Read the content/posts directory
             function(callback){
-                var p = path.join(process.cwd(), 'content', 'pages');
                 if (program.verbose) console.log(colors.cyan('Reading the content/pages directory...'));
-                fs.readdir(p, function(err, result){
+                fs.readdir(pages_path, function(err, result){
                     file_list = result;
                     callback(err);
                 });
@@ -35,7 +35,8 @@ module.exports = function (program, options, callback) {
             // Create the posts...
             function(callback){
                 async.each(file_list, function(filename, callback){
-                    read_content(program, 'pages', filename, 'page', function(err, page){
+                    var p = path.join(pages_path, filename);
+                    read_content(program, p, 'page', function(err, page){
                         if (! err && page){
                             pages[page.id] = page;
                         }
@@ -63,6 +64,7 @@ module.exports = function (program, options, callback) {
                         parents.unshift(parent);
                         parent = parent.parent && _.has(pages, parent.parent) ? pages[parent.parent] : null;
                     }
+                    page.parent = parent;
                     page.parents = parents;
                 });
                 callback(null);

@@ -79,7 +79,7 @@ module.exports = function (program, options, posts, callback) {
                                 type: 'tag'
                             };
                         }
-                        tags[tag_id].push(post);
+                        tags[tag_id].posts.push(post);
                     });
                 });
 
